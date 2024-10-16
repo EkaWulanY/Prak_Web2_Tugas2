@@ -60,13 +60,13 @@ session start sendiri berfungsi untuk menampung data sementara
 
    ```php
    <?php
-// Memulai sesi PHP untuk penggunaan session di dalam aplikasi
 session_start(); 
    ```
 
 3. membuat class database untuk mengkonekan pada database
 
  ```php
+
 // Kelas untuk koneksi database
 class Database {
     private $host = 'localhost';  // Nama host server database
@@ -96,6 +96,7 @@ class Database {
         }
     }
 }
+
 ```
 Kelas Database bertanggung jawab untuk mengatur koneksi ke database MySQL menggunakan PDO. Parameter seperti host, db_name, username, dan password digunakan untuk konfigurasi koneksi. Metode connect() mencoba untuk membuat koneksi ke database dan menangani kesalahan yang mungkin terjadi dengan blok try-catch.
 
@@ -103,6 +104,7 @@ Kelas Database bertanggung jawab untuk mengatur koneksi ke database MySQL menggu
    kelas ini digunakan untuk melakukan operasi terkait ketidakhadiran pegawai. untuk membaca data gunakan metode read, dalam mengambil data tertentu atau membaca data yang dijadikan sub class dalam hal ini adalah izin cuti dan izin tugas dapat menambahkan where untuk mengambil data yang akan ditampilkan.
 
 ```php
+
 // Metode untuk mengambil semua data izin ketidakhadiran dari tabel
     public function read() {
         $query = "SELECT * FROM " . $this->table_name;  // Query untuk mengambil semua data
@@ -142,5 +144,52 @@ Kelas Database bertanggung jawab untuk mengatur koneksi ke database MySQL menggu
         return $stmt;  // Mengembalikan hasil query
     }
 }
+
 ```
-5. 
+
+5. Membuat objek Database untuk menghubungkan aplikasi dengan database, dan kemudian objek IzinKetidakhadiran dibuat dengan memanfaatkan koneksi tersebut.
+   ```php
+
+   // Inisialisasi koneksi database dan objek model izin
+$database = new Database();  // Membuat objek koneksi database
+$db = $database->conn;  // Mendapatkan koneksi yang sudah terhubung
+$izin = new IzinKetidakhadiran($db);  // Membuat objek model izin ketidakhadiran
+
+   ```
+6. Melakukan Pemeriksaan Parameter hal ini dilakukan untuk memeriksa apakah parameter tersebut sudah ada atau belum
+```php
+
+// Mengecek parameter izin cuti, izin tugas, atau tentang ada di URL
+$izin_cuti = isset($_GET['izin_cuti']) ? true : false;  // Mengecek apakah parameter izin cuti ada di URL
+$izin_tugas = isset($_GET['izin_tugas']) ? true : false;  // Mengecek apakah parameter izin tugas ada di URL
+$tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter tentang ada di URL
+?>
+
+```
+7. Menampilkan tampilan navigasi untuk menampilkan halaman beranda, izin cuti, izin lainnya, tentang dengan menggunakan bootstrap
+   ```php
+
+   <nav class="navbar navbar-expand-lg navbar-light bg-light">  <!-- Navbar Bootstrap -->
+        <a class="navbar-brand" href="#">Sistem Izin Dosen</a>  <!-- Nama aplikasi di navbar -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>  <!-- Tombol navbar di layar kecil -->
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="?">Beranda</a>  <!-- Link ke halaman beranda -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="?izin_cuti=true">Izin Cuti</a>  <!-- Link ke halaman izin cuti -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="?izin_tugas=true">Izin Tugas</a>  <!-- Link ke halaman izin tugas -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="?tentang=true">Tentang</a>  <!-- Link ke halaman tentang -->
+                </li>
+            </ul>
+        </div>
+    </nav>
+   
+   ```
