@@ -84,7 +84,7 @@ Studi Kasus yang di dapatkan berupa izin ketidakhadiran pegawai
 <body>
     <!-- Navbar Bootstrap -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Sistem Izin Dosen</a> <!-- Nama aplikasi di navbar -->
+        <a class="navbar-brand" href="index.php">Sistem Izin Dosen</a> <!-- Nama aplikasi di navbar -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span> <!-- Tombol navbar di layar kecil -->
         </button>
@@ -293,7 +293,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
    ```php
 
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Sistem Izin Dosen</a>
+        <a class="navbar-brand" href="index.php">Sistem Izin Dosen</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -430,7 +430,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
 <body>
     <!-- Navbar Bootstrap -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Sistem Izin Dosen</a> <!-- Nama aplikasi di navbar -->
+        <a class="navbar-brand" href="index.php">Sistem Izin Dosen</a> <!-- Nama aplikasi di navbar -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span> <!-- Tombol navbar di layar kecil -->
         </button>
@@ -612,7 +612,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Sistem Izin Dosen</a>
+        <a class="navbar-brand" href="index.php">Sistem Izin Dosen</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
