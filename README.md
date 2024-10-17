@@ -506,6 +506,9 @@ $tentang = isset($_GET['tentang']) ? true : false;
 </body>
 
 </html>
+```
+
+```php
 
 <?php
 session_start();
