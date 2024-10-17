@@ -401,7 +401,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
 
 ```
 
-## Coding index
+## Coding Tugas 2
 
 ```php
 
@@ -507,12 +507,6 @@ $tentang = isset($_GET['tentang']) ? true : false;
 
 </html>
 
-
-```
-
-## Coding Tugas 2
-
-```php
 <?php
 session_start();
 
