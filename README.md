@@ -57,7 +57,7 @@ Studi Kasus yang di dapatkan berupa izin ketidakhadiran pegawai
 
 2. Membuat view untuk tampilan awal saat dibuka
 
-   ```php
+   ```html
    <!DOCTYPE html>
    <html lang="id">
    <head>
@@ -290,7 +290,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
 ```
 8. Menampilkan tampilan navigasi untuk menampilkan halaman beranda, izin cuti, izin lainnya, tentang dengan menggunakan bootstrap
    
-   ```php
+   ```html
 
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="index.php">Sistem Izin Dosen</a>
@@ -403,7 +403,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
 
 ## Coding Tugas 2
 
-```php
+```html
 
 <!DOCTYPE html>
 <html lang="id">
@@ -507,6 +507,7 @@ $tentang = isset($_GET['tentang']) ? true : false;
 
 </html>
 ```
+
 
 ```php
 
