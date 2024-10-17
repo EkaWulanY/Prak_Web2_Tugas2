@@ -187,32 +187,27 @@ session start sendiri berfungsi untuk menampung data sementara
 
 // Kelas untuk koneksi database
 
-class Database {
-    private $host = 'localhost';  // Nama host server database
-    private $db_name = 'persuratan_dosen';  // Nama database yang digunakan
-    private $username = 'root';  // Nama pengguna untuk mengakses database
-    private $password = '';  // Kata sandi untuk pengguna database
-    public $conn;  // Variabel untuk menyimpan koneksi database
+class Database
+{
+    private $host = 'localhost';
+    private $db_name = 'persuratan_dosen';
+    private $username = 'root';
+    private $password = '';
+    public $conn;
 
-    // Constructor untuk menginisialisasi koneksi saat objek dibuat
-    public function __construct() {
-        $this->connect();  // Memanggil metode koneksi database
+    public function __construct()
+    {
+        $this->connect();
     }
 
-    // Metode untuk melakukan koneksi ke database menggunakan PDO
-
-    public function connect() {
-        $this->conn = null;  // Menginisialisasi variabel koneksi menjadi null
-
-    // melakukan uji coba untuk mengetahui apakah terjadi error atau tidak
+    public function connect()
+    {
+        $this->conn = null;
 
         try {
-            // Mencoba membuat koneksi ke database dengan PDO
             $this->conn = new PDO("mysql:host={$this->host};dbname={$this->db_name}", $this->username, $this->password);
-            // Mengatur mode error pada PDO menjadi exception
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $exception) {
-            // Menampilkan pesan kesalahan jika koneksi gagal
             echo "Connection error: " . $exception->getMessage();
         }
     }
@@ -227,48 +222,46 @@ Kelas Database bertanggung jawab untuk mengatur koneksi ke database MySQL menggu
 
 ```php
 
-// Metode untuk mengambil semua data izin ketidakhadiran dari tabel
+class IzinKetidakhadiran
+{
+    private $conn;
+    public $table_name = "izin_ketidakhadiran_pegawai";
 
-    public function read() {
-        $query = "SELECT * FROM " . $this->table_name;  // Query untuk mengambil semua data
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+    public function __construct($db)
+    {
+        $this->conn = $db;
     }
 
-    // Metode untuk mengambil data izin cuti saja
-
-    public function readIzinCuti() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Cuti'";  // Query untuk mengambil data izin cuti
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+    public function read()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
-    // Metode untuk mengambil data izin tugas (luar kota dan lainnya)
-
-    public function readIzinTugas() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Izin Tugas Luar Kota' OR keperluan = 'Tanpa Keterangan'";  // Query untuk mengambil data izin tugas
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
-    }
-// Metode untuk mengambil data izin tugas luar kota saja
-
-    public function readIzinTugasLuarKota() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Izin Tugas Luar Kota'";  // Query untuk mengambil data izin tugas luar kota
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+    public function readIzinCuti()
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Cuti'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
-    // Metode untuk mengambil data izin tugas lainnya (selain luar kota)
+    public function readIzinTugasLuarKota()
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Izin Tugas Luar Kota'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
 
-    public function readIzinTugasLainnya() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Tanpa Keterangan'";  // Query untuk mengambil data lainya
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+    public function readIzinTugasLainnya()
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Tanpa Keterangan'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 }
 
@@ -276,22 +269,22 @@ Kelas Database bertanggung jawab untuk mengatur koneksi ke database MySQL menggu
 
 6. Membuat objek Database untuk menghubungkan aplikasi dengan database, dan kemudian objek IzinKetidakhadiran dibuat dengan memanfaatkan koneksi tersebut.
    ```php
+   
+   $database = new Database();
+   $db = $database->conn;
+   $izin = new IzinKetidakhadiran($db);
 
-   // Inisialisasi koneksi database dan objek model izin
-   $database = new Database();  // Membuat objek koneksi database
-   $db = $database->conn;  // Mendapatkan koneksi yang sudah terhubung
-   $izin = new IzinKetidakhadiran($db);  // Membuat objek model izin ketidakhadiran
 
    ```
 7. Melakukan Pemeriksaan Parameter hal ini dilakukan untuk memeriksa apakah parameter tersebut sudah ada atau belum
 ```php
 
-// Mengecek parameter izin cuti, izin tugas, atau tentang ada di URL
+// Mengecek parameter izin cuti, izin tugas luar kota, izin tugas lainnya, atau tentang ada di URL
 
-$izin_cuti = isset($_GET['izin_cuti']) ? true : false;  // Mengecek apakah parameter izin cuti ada di URL
-$izin_tugas = isset($_GET['izin_tugas']) ? true : false;  // Mengecek apakah parameter izin tugas ada di URL
-$tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter tentang ada di URL
-
+$izin_cuti = isset($_GET['izin_cuti']) ? true : false;
+$izin_tugas_luar_kota = isset($_GET['izin_tugas_luar_kota']) ? true : false;
+$izin_tugas_lainnya = isset($_GET['izin_tugas_lainnya']) ? true : false;
+$tentang = isset($_GET['tentang']) ? true : false;
 ?>
 
 ```
@@ -299,24 +292,27 @@ $tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter
    
    ```php
 
-   <nav class="navbar navbar-expand-lg navbar-light bg-light">  <!-- Navbar Bootstrap -->
-        <a class="navbar-brand" href="#">Sistem Izin Dosen</a>  <!-- Nama aplikasi di navbar -->
+   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Sistem Izin Dosen</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>  <!-- Tombol navbar di layar kecil -->
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="?">Beranda</a>  <!-- Link ke halaman beranda -->
+                    <a class="nav-link" href="?">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?izin_cuti=true">Izin Cuti</a>  <!-- Link ke halaman izin cuti -->
+                    <a class="nav-link" href="?izin_cuti=true">Izin Cuti</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?izin_tugas=true">Izin Tugas</a>  <!-- Link ke halaman izin tugas -->
+                    <a class="nav-link" href="?izin_tugas_luar_kota=true">Izin Tugas Luar Kota</a> <!-- Link baru untuk Izin Tugas Luar Kota -->
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?tentang=true">Tentang</a>  <!-- Link ke halaman tentang -->
+                    <a class="nav-link" href="?izin_tugas_lainnya=true">Tanpa Keterangan</a> <!-- Link baru untuk Izin Tugas Tanpa Keterangan -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="?tentang=true">Tentang</a>
                 </li>
             </ul>
         </div>
@@ -327,16 +323,15 @@ $tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter
    data yang diambil berdasarkan data isin cuti, izin lainya, dan tentang. pada navbar tentang hanya akan menampilkan id izin serta keperluan dari izin tersebut, selain itu maka tidak akan ditampilkan.
 
    ```php
-
    
-    <div class="container mt-5"> <!-- Membuat container untuk konten utama -->
-        <h2>Data Izin Ketidakhadiran Pegawai</h2> <!-- Judul konten -->
-        <table class="table table-striped"> <!-- Tabel dengan gaya Bootstrap -->
+   <div class="container mt-5">
+        <h2>Data Izin Ketidakhadiran Pegawai</h2>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID Izin</th>
                     <th>Keperluan</th>
-                    <?php if (!$tentang): ?> <!-- Menampilkan kolom tambahan jika bukan halaman "tentang" -->
+                    <?php if (!$tentang): ?>
                         <th>Finger Print ID</th>
                         <th>Tanggal Mulai Izin</th>
                         <th>Durasi Izin (Hari)</th>
@@ -352,47 +347,42 @@ $tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter
                 </tr>
             </thead>
             <tbody>
-    <?php
-    // Mengambil data izin berdasarkan pilihan (izin cuti, izin tugas, atau data umum)
-    if ($izin_cuti) {
-        $stmt = $izin->readIzinCuti();  // Mengambil data izin cuti jika URL berisi parameter izin_cuti
-    } elseif ($izin_tugas) {  // Jika parameter izin_tugas ada di URL
-        $stmt = $izin->readIzinTugas();  // Mengambil data izin tugas (baik luar kota maupun lainnya)
-    } elseif ($tentang) {
-        // Menampilkan data singkat untuk halaman "tentang"
-        // Query singkat untuk halaman "tentang"
-        $query = "SELECT id_izin, keperluan, finger_print_id FROM " . $izin->table_name;
-        $stmt = $db->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-    } else {
-        $stmt = $izin->read();  // Jika tidak ada parameter spesifik, mengambil semua data izin
-    }
+                <?php
+                if ($izin_cuti) {
+                    $stmt = $izin->readIzinCuti();
+                } elseif ($izin_tugas_luar_kota) {
+                    $stmt = $izin->readIzinTugasLuarKota();  // Menampilkan data Izin Tugas Luar Kota
+                } elseif ($izin_tugas_lainnya) {
+                    $stmt = $izin->readIzinTugasLainnya();  // Menampilkan data Izin Tugas Tanpa Keterangan
+                } elseif ($tentang) {
+                    $query = "SELECT id_izin, keperluan, finger_print_id FROM " . $izin->table_name;
+                    $stmt = $db->prepare($query);
+                    $stmt->execute();
+                } else {
+                    $stmt = $izin->read();
+                }
 
-    // Looping data hasil query dan menampilkannya dalam tabel
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // Menampilkan setiap baris data izin
-        echo "<tr>
-            <td>{$row['id_izin']}</td>
-            <td>{$row['keperluan']}</td>";
-        if (!$tentang) {
-            // Menghapus kolom tanda tangan pengusul dan tanda tangan atasan
-            echo "<td>{$row['finger_print_id']}</td>
-                  <td>{$row['tgl_mulai_izin']}</td>
-                  <td>{$row['durasi_izin_hari']}</td>
-                  <td>{$row['durasi_izin_jam']}</td>
-                  <td>{$row['durasi_izin_menit']}</td>
-                  <td>{$row['nama_pengusul']}</td>
-                  <td>{$row['tgl_usul']}</td>
-                  <td>{$row['putusan']}</td>
-                  <td>{$row['tgl_putusan']}</td>
-                  <td>{$row['catatan']}</td>
-                  <td>{$row['dosen']}</td>";
-        }
-        echo "</tr>";  // Menutup tag <tr> untuk baris data saat ini
-    }
-    ?>
-</tbody>
-
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    echo "<tr>
+                        <td>{$row['id_izin']}</td>
+                        <td>{$row['keperluan']}</td>";
+                    if (!$tentang) {
+                        echo "<td>{$row['finger_print_id']}</td>
+                              <td>{$row['tgl_mulai_izin']}</td>
+                              <td>{$row['durasi_izin_hari']}</td>
+                              <td>{$row['durasi_izin_jam']}</td>
+                              <td>{$row['durasi_izin_menit']}</td>
+                              <td>{$row['nama_pengusul']}</td>
+                              <td>{$row['tgl_usul']}</td>
+                              <td>{$row['putusan']}</td>
+                              <td>{$row['tgl_putusan']}</td>
+                              <td>{$row['catatan']}</td>
+                              <td>{$row['dosen']}</td>";
+                    }
+                    echo "</tr>";
+                }
+                ?>
+            </tbody>
         </table>
     </div>
     
@@ -402,12 +392,11 @@ $tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter
 
 ``php
 
-<!-- Menyertakan file JavaScript eksternal untuk Bootstrap dan jQuery -->
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
 
 ```
@@ -524,39 +513,31 @@ $tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter
 ## Coding Tugas 2
 
 ```php
-
 <?php
-// Memulai sesi PHP untuk penggunaan session di dalam aplikasi
 session_start();
 
 // Kelas untuk koneksi database
 class Database
 {
-    private $host = 'localhost';  // Nama host server database
-    private $db_name = 'persuratan_dosen';  // Nama database yang digunakan
-    private $username = 'root';  // Nama pengguna untuk mengakses database
-    private $password = '';  // Kata sandi untuk pengguna database
-    public $conn;  // Variabel untuk menyimpan koneksi database
+    private $host = 'localhost';
+    private $db_name = 'persuratan_dosen';
+    private $username = 'root';
+    private $password = '';
+    public $conn;
 
-    // Constructor untuk menginisialisasi koneksi saat objek dibuat
     public function __construct()
     {
-        $this->connect();  // Memanggil metode koneksi database
+        $this->connect();
     }
 
-    // Metode untuk melakukan koneksi ke database menggunakan PDO
     public function connect()
     {
-        $this->conn = null;  // Menginisialisasi variabel koneksi menjadi null
+        $this->conn = null;
 
-        // melakukan uji coba untuk mengetahui apakah terjadi error atau tidak   
         try {
-            // Mencoba membuat koneksi ke database dengan PDO
             $this->conn = new PDO("mysql:host={$this->host};dbname={$this->db_name}", $this->username, $this->password);
-            // Mengatur mode error pada PDO menjadi exception
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $exception) {
-            // Menampilkan pesan kesalahan jika koneksi gagal
             echo "Connection error: " . $exception->getMessage();
         }
     }
@@ -565,116 +546,105 @@ class Database
 // Kelas model untuk mengelola data izin ketidakhadiran pegawai
 class IzinKetidakhadiran
 {
-    private $conn;  // Variabel untuk menyimpan koneksi database
-    public $table_name = "izin_ketidakhadiran_pegawai";  // Nama tabel di database
+    private $conn;
+    public $table_name = "izin_ketidakhadiran_pegawai";
 
-    // Constructor untuk menerima objek koneksi database sebagai parameter
     public function __construct($db)
     {
         $this->conn = $db;
     }
 
-    // Metode untuk mengambil semua data izin ketidakhadiran dari tabel
     public function read()
     {
-        $query = "SELECT * FROM " . $this->table_name;  // Query untuk mengambil semua data
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
-    // Metode untuk mengambil data izin cuti saja
     public function readIzinCuti()
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Cuti'";  // Query untuk mengambil data izin cuti
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Cuti'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
-    // Metode untuk mengambil data izin tugas (luar kota dan lainnya)
-    public function readIzinTugas()
-    {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Izin Tugas Luar Kota' OR keperluan = 'Tanpa Keterangan'";  // Query untuk mengambil data izin tugas
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
-    }
-
-    // Metode untuk mengambil data izin tugas luar kota saja
     public function readIzinTugasLuarKota()
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Izin Tugas Luar Kota'";  // Query untuk mengambil data izin tugas luar kota
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Izin Tugas Luar Kota'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
-    // Metode untuk mengambil data izin tugas lainnya (selain luar kota)
     public function readIzinTugasLainnya()
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Tanpa Keterangan'";  // Query untuk mengambil data lain
-        $stmt = $this->conn->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-        return $stmt;  // Mengembalikan hasil query
+        $query = "SELECT * FROM " . $this->table_name . " WHERE keperluan = 'Tanpa Keterangan'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 }
 
-// Inisialisasi koneksi database dan objek model izin
-$database = new Database();  // Membuat objek koneksi database
-$db = $database->conn;  // Mendapatkan koneksi yang sudah terhubung
-$izin = new IzinKetidakhadiran($db);  // Membuat objek model izin ketidakhadiran
+$database = new Database();
+$db = $database->conn;
+$izin = new IzinKetidakhadiran($db);
 
-// Mengecek parameter izin cuti, izin tugas, atau tentang ada di URL
-$izin_cuti = isset($_GET['izin_cuti']) ? true : false;  // Mengecek apakah parameter izin cuti ada di URL
-$izin_tugas = isset($_GET['izin_tugas']) ? true : false;  // Mengecek apakah parameter izin tugas ada di URL
-$tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter tentang ada di URL
+// Mengecek parameter izin cuti, izin tugas luar kota, izin tugas lainnya, atau tentang ada di URL
+$izin_cuti = isset($_GET['izin_cuti']) ? true : false;
+$izin_tugas_luar_kota = isset($_GET['izin_tugas_luar_kota']) ? true : false;
+$izin_tugas_lainnya = isset($_GET['izin_tugas_lainnya']) ? true : false;
+$tentang = isset($_GET['tentang']) ? true : false;
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8"> <!-- Mengatur encoding dokumen -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive meta tag -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> <!-- Mengimpor CSS Bootstrap -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <center>
         <title>Data Izin Ketidakhadiran Pegawai</title>
-    </center> <!-- Judul halaman -->
+    </center>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light"> <!-- Navbar Bootstrap -->
-        <a class="navbar-brand" href="#">Sistem Izin Dosen</a> <!-- Nama aplikasi di navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Sistem Izin Dosen</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span> <!-- Tombol navbar di layar kecil -->
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="?">Beranda</a> <!-- Link ke halaman beranda -->
+                    <a class="nav-link" href="?">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?izin_cuti=true">Izin Cuti</a> <!-- Link ke halaman izin cuti -->
+                    <a class="nav-link" href="?izin_cuti=true">Izin Cuti</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?izin_tugas=true">Lainnya</a> <!-- Link ke halaman izin tugas -->
+                    <a class="nav-link" href="?izin_tugas_luar_kota=true">Izin Tugas Luar Kota</a> <!-- Link baru untuk Izin Tugas Luar Kota -->
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?tentang=true">Tentang</a> <!-- Link ke halaman tentang -->
+                    <a class="nav-link" href="?izin_tugas_lainnya=true">Tanpa Keterangan</a> <!-- Link baru untuk Izin Tugas Tanpa Keterangan -->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="?tentang=true">Tentang</a>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <div class="container mt-5"> <!-- Membuat container untuk konten utama -->
-        <h2>Data Izin Ketidakhadiran Pegawai</h2> <!-- Judul konten -->
-        <table class="table table-striped"> <!-- Tabel dengan gaya Bootstrap -->
+    <div class="container mt-5">
+        <h2>Data Izin Ketidakhadiran Pegawai</h2>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID Izin</th>
                     <th>Keperluan</th>
-                    <?php if (!$tentang): ?> <!-- Menampilkan kolom tambahan jika bukan halaman "tentang" -->
+                    <?php if (!$tentang): ?>
                         <th>Finger Print ID</th>
                         <th>Tanggal Mulai Izin</th>
                         <th>Durasi Izin (Hari)</th>
@@ -690,72 +660,71 @@ $tentang = isset($_GET['tentang']) ? true : false;  // Mengecek apakah parameter
                 </tr>
             </thead>
             <tbody>
-    <?php
-    // Mengambil data izin berdasarkan pilihan (izin cuti, izin tugas, atau data umum)
-    if ($izin_cuti) {
-        $stmt = $izin->readIzinCuti();  // Mengambil data izin cuti jika URL berisi parameter izin_cuti
-    } elseif ($izin_tugas) {  // Jika parameter izin_tugas ada di URL
-        $stmt = $izin->readIzinTugas();  // Mengambil data izin tugas (baik luar kota maupun lainnya)
-    } elseif ($tentang) {
-        // Menampilkan data singkat untuk halaman "tentang"
-        // Query singkat untuk halaman "tentang"
-        $query = "SELECT id_izin, keperluan, finger_print_id FROM " . $izin->table_name;
-        $stmt = $db->prepare($query);  // Menyiapkan query
-        $stmt->execute();  // Menjalankan query
-    } else {
-        $stmt = $izin->read();  // Jika tidak ada parameter spesifik, mengambil semua data izin
-    }
+                <?php
+                if ($izin_cuti) {
+                    $stmt = $izin->readIzinCuti();
+                } elseif ($izin_tugas_luar_kota) {
+                    $stmt = $izin->readIzinTugasLuarKota();  // Menampilkan data Izin Tugas Luar Kota
+                } elseif ($izin_tugas_lainnya) {
+                    $stmt = $izin->readIzinTugasLainnya();  // Menampilkan data Izin Tugas Tanpa Keterangan
+                } elseif ($tentang) {
+                    $query = "SELECT id_izin, keperluan, finger_print_id FROM " . $izin->table_name;
+                    $stmt = $db->prepare($query);
+                    $stmt->execute();
+                } else {
+                    $stmt = $izin->read();
+                }
 
-    // Looping data hasil query dan menampilkannya dalam tabel
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // Menampilkan setiap baris data izin
-        echo "<tr>
-            <td>{$row['id_izin']}</td>
-            <td>{$row['keperluan']}</td>";
-        if (!$tentang) {
-            // Menghapus kolom tanda tangan pengusul dan tanda tangan atasan
-            echo "<td>{$row['finger_print_id']}</td>
-                  <td>{$row['tgl_mulai_izin']}</td>
-                  <td>{$row['durasi_izin_hari']}</td>
-                  <td>{$row['durasi_izin_jam']}</td>
-                  <td>{$row['durasi_izin_menit']}</td>
-                  <td>{$row['nama_pengusul']}</td>
-                  <td>{$row['tgl_usul']}</td>
-                  <td>{$row['putusan']}</td>
-                  <td>{$row['tgl_putusan']}</td>
-                  <td>{$row['catatan']}</td>
-                  <td>{$row['dosen']}</td>";
-        }
-        echo "</tr>";  // Menutup tag <tr> untuk baris data saat ini
-    }
-    ?>
-</tbody>
-
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    echo "<tr>
+                        <td>{$row['id_izin']}</td>
+                        <td>{$row['keperluan']}</td>";
+                    if (!$tentang) {
+                        echo "<td>{$row['finger_print_id']}</td>
+                              <td>{$row['tgl_mulai_izin']}</td>
+                              <td>{$row['durasi_izin_hari']}</td>
+                              <td>{$row['durasi_izin_jam']}</td>
+                              <td>{$row['durasi_izin_menit']}</td>
+                              <td>{$row['nama_pengusul']}</td>
+                              <td>{$row['tgl_usul']}</td>
+                              <td>{$row['putusan']}</td>
+                              <td>{$row['tgl_putusan']}</td>
+                              <td>{$row['catatan']}</td>
+                              <td>{$row['dosen']}</td>";
+                    }
+                    echo "</tr>";
+                }
+                ?>
+            </tbody>
         </table>
     </div>
 
-    <!-- Menyertakan file JavaScript eksternal untuk Bootstrap dan jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
+
 ```
 ### Output index
-![image](https://github.com/user-attachments/assets/c480b0c3-153e-4cb0-835b-e71ba7fbe70e)
+![image](https://github.com/user-attachments/assets/f8c4b842-e9ee-4b20-aeaa-84d20234146e)
 
 ### Output tampilan beranda
-![image](https://github.com/user-attachments/assets/c80a0dee-ed16-49a7-b2a0-7b8112af7808)
+![image](https://github.com/user-attachments/assets/b9b669ed-dfc8-4110-9388-961ca468a543)
 
-### Output tampilan izin cuti
-![image](https://github.com/user-attachments/assets/8e712a6e-a393-4cf8-9265-14ac8526e578)
+### Output  izin cuti
+![image](https://github.com/user-attachments/assets/a61c1d21-4deb-4b45-ba52-1ae9e27a764a)
 
-### Output tampilan lainnya
-![image](https://github.com/user-attachments/assets/6b4df763-1099-4fce-8f84-cf3ef699816e)
+### Output izin tugas luar kota 
+![image](https://github.com/user-attachments/assets/ac508d3f-a8f8-47a3-8be2-7a6885483a36)
+
+### Output tanpa keterangan
+![image](https://github.com/user-attachments/assets/1428a4dd-ae23-4c54-92bc-03b564ea7446)
 
 ### Output tentang
-![image](https://github.com/user-attachments/assets/6e045e51-9cc1-438e-8b35-993e16fe0624)
+![image](https://github.com/user-attachments/assets/af3ea586-9b4a-4466-a29e-71b85acf7245)
+
 
 
 
