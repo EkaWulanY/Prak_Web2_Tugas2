@@ -16,7 +16,7 @@ Studi Kasus yang di dapatkan berupa izin ketidakhadiran pegawai
 
 ## Langkah langkah
 
-1. membuat database dengan mana persuratan_dosen yang didalamnya terdapat tabel izin_ketidakhadiran_pegawai
+1. membuat database dengan mana persuratan_dosen yang didalamnya terdapat tabel izin_ketidakhadiran_pegawai dari studi kasus izin_ketidakhadiran_pegawai
 
    a. ERD izin ketidakhadiran pegawai
    
@@ -54,6 +54,11 @@ Studi Kasus yang di dapatkan berupa izin ketidakhadiran pegawai
 - **catatan**: Tipe data `varchar(255)` untuk menyimpan catatan tambahan terkait izin, tidak boleh bernilai `NULL`.
 
 - **dosen**: Tipe data `varchar(255)` untuk menyimpan nama dosen yang terkait dengan izin, tidak boleh bernilai `NULL`.
+
+  ![image](https://github.com/user-attachments/assets/233aba14-0697-4641-a5f8-d7798b16c962)
+
+  ![image](https://github.com/user-attachments/assets/bccdaa58-351c-4693-ab16-962144291c3d)
+
 
 2. Membuat view untuk tampilan awal saat dibuka
 
